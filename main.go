@@ -1,11 +1,14 @@
 package main
 
 import (
-	"platform/placeholder"
-	"platform/services"
+	"platform/logging"
 )
 
+func writeMessage(logger logging.Logger) {
+	logger.Info("Hello, Platform")
+}
+
 func main() {
-	services.RegisterDefaultServices()
-	placeholder.Start()
+	var logger logging.Logger = logging.NewDefaultLogger(logging.Information)
+	writeMessage(logger)
 }
