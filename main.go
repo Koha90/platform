@@ -24,11 +24,11 @@ func main() {
 
 	services.RegisterDefaultServices()
 
-	var cfg config.Configuration
-	services.GetServices(&cfg)
+	//var cfg config.Configuration
+	//services.GetServices(&cfg)
+	//
+	//var logger logging.Logger
+	//services.GetServices(&logger)
 
-	var logger logging.Logger
-	services.GetServices(&logger)
-
-	writeMessage(logger, cfg)
+	services.Call(writeMessage)
 }
