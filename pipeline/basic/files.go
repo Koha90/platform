@@ -18,7 +18,7 @@ func (sfc *StaticFileComponent) Init() {
 	var cfg config.Configuration
 	services.GetServices(&cfg)
 	sfc.urlPrefix = cfg.GetStringDefault("file:urlprefix", "/files/")
-	path, ok := cfg.GetString("file:path")
+	path, ok := cfg.GetString("files:path")
 	if ok {
 		sfc.stdLibHandler = http.StripPrefix(sfc.urlPrefix, http.FileServer(http.Dir(path)))
 	} else {
