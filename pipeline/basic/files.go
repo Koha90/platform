@@ -6,19 +6,19 @@ import (
 
 	"platform/config"
 	"platform/pipeline"
-	"platform/services"
 )
 
 type StaticFileComponent struct {
 	urlPrefix     string
 	stdLibHandler http.Handler
+	Config        config.Configuration
 }
 
 func (sfc *StaticFileComponent) Init() {
-	var cfg config.Configuration
-	services.GetServices(&cfg)
-	sfc.urlPrefix = cfg.GetStringDefault("file:urlprefix", "/files/")
-	path, ok := cfg.GetString("files:path")
+	//var cfg config.Configuration
+	//services.GetServices(&cfg)
+	sfc.urlPrefix = sfc.Config.GetStringDefault("file:urlprefix", "/files/")
+	path, ok := sfc.Config.GetString("files:path")
 	if ok {
 		sfc.stdLibHandler = http.StripPrefix(sfc.urlPrefix, http.FileServer(http.Dir(path)))
 	} else {
