@@ -55,7 +55,10 @@ func (router *RouterComponent) invokeHandler(route Route, rawParams []string, co
 		result := route.handlerMethod.Func.Call(paramVals)
 		if len(result) > 0 {
 			if action, ok := result[0].Interface().(actionresults.ActionResult); ok {
-				err = services.PopulateForContext(context.Context(), action)
+				invoker := createInvokeHandlerFunc(context.Context(), router.routes)
+				err = services.PopulateForContextWithExtras(context.Context(), action, map[reflect.Type]reflect.Value{
+					reflect.TypeOf(invoker): reflect.ValueOf(invoker),
+				})
 				if err == nil {
 					err = action.Execute(&actionresults.ActionContext{
 						context.Context(), context.ResponseWriter,
