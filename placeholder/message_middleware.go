@@ -35,7 +35,7 @@ func (c *SimpleMessageComponent) ProcessRequestWithServices(
 
 func (c *SimpleMessageComponent) ProcessRequest(ctx *pipeline.ComponentContext, next func(*pipeline.ComponentContext)) {
 	var cfg config.Configuration
-	services.GetServices(&cfg)
+	services.GetService(&cfg)
 	msg, ok := cfg.GetString("main:message")
 	if ok {
 		io.WriteString(ctx.ResponseWriter, msg)

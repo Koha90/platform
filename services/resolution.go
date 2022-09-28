@@ -6,7 +6,7 @@ import (
 	"reflect"
 )
 
-func GetServices(target interface{}) error {
+func GetService(target interface{}) error {
 	return GetServiceForContext(context.Background(), target)
 }
 
