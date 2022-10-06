@@ -6,6 +6,7 @@ import (
 	"platform/http/actionresults"
 	"platform/http/handling"
 	"platform/logging"
+	"platform/validation"
 )
 
 var names = []string{"Alice", "Bob", "Charlie", "Dora"}
@@ -13,6 +14,7 @@ var names = []string{"Alice", "Bob", "Charlie", "Dora"}
 type NameHandler struct {
 	logging.Logger
 	handling.URLGenerator
+	validation.Validator
 }
 
 func (n NameHandler) GetName(i int) actionresults.ActionResult {
@@ -32,12 +34,20 @@ func (n NameHandler) GetNames() actionresults.ActionResult {
 }
 
 type NewName struct {
-	Name          string
+	Name          string `validation:"required,min:3"`
 	InsertAtStart bool
+}
+
+func (n NameHandler) GetForm() actionresults.ActionResult {
+	postUrl, _ := n.URLGenerator.GenerateUrl(NameHandler.PostName)
+	return actionresults.NewTemplateAction("name_form.html", postUrl)
 }
 
 func (n NameHandler) PostName(new NewName) actionresults.ActionResult {
 	n.Logger.Debugf("PostName method invoked with argument %v", new)
+	if ok, errs := n.Validator.Validate(&new); !ok {
+		return actionresults.NewTemplateAction("validation_errors.html", errs)
+	}
 	if new.InsertAtStart {
 		names = append([]string{new.Name}, names...)
 	} else {
