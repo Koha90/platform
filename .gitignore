@@ -1,0 +1,8 @@
+# folders
+.idea
+
+# files
+config.json
+config.yaml
+config.env
+.env
