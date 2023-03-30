@@ -1,7 +1,8 @@
-// package logging ...
+// Package logging ...
 package logging
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -9,6 +10,7 @@ import (
 	"github.com/koha90/platform/internal/config"
 )
 
+// NewDefaultLogger create default logger
 func NewDefaultLogger(cfg config.Configuration) Logger {
 	var level LogLevel = Debug
 	if configLevelString, found := cfg.GetString("logging:level"); found {
@@ -19,16 +21,21 @@ func NewDefaultLogger(cfg config.Configuration) Logger {
 	return &DefaultLogger{
 		minLevel: level,
 		loggers: map[LogLevel]*log.Logger{
-			Trace:       log.New(os.Stdout, "[TRACE]: ", flags),
-			Debug:       log.New(os.Stdout, "[DEBUG]: ", flags),
-			Information: log.New(os.Stdout, "[INFO]: ", flags),
-			Warning:     log.New(os.Stdout, "[WARN]: ", flags),
-			Fatal:       log.New(os.Stdout, "[FATAL]: ", flags),
+			Trace: log.New(os.Stdout, "[TRACE]: ", flags),
+			Debug: log.New(os.Stdout, "[DEBUG]: ", flags),
+			Information: log.New(
+				os.Stdout,
+				fmt.Sprintf("%c[1;40;34m%s%c[0m", 0x1B, "[INFO]: ", 0x1B),
+				flags,
+			),
+			Warning: log.New(os.Stdout, "[WARN]: ", flags),
+			Fatal:   log.New(os.Stdout, "[FATAL]: ", flags),
 		},
 		triggerPanic: true,
 	}
 }
 
+// LogLevelFromString set level log
 func LogLevelFromString(val string) (level LogLevel) {
 	switch strings.ToLower(val) {
 	case "debug":

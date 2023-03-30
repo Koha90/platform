@@ -1,8 +1,10 @@
-// package logging to write log
+// Package logging to write log
 package logging
 
+// LogLevel ...
 type LogLevel int
 
+// Trace, Debug, Information, Warning, Fatal, None is level of log
 const (
 	Trace LogLevel = iota
 	Debug
@@ -12,6 +14,7 @@ const (
 	None
 )
 
+// Logger ...
 type Logger interface {
 	Trace(string)
 	Tracef(string, ...interface{})

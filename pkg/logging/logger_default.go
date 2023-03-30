@@ -1,4 +1,4 @@
-// package logging ...
+// Package logging ...
 package logging
 
 import (
@@ -6,6 +6,7 @@ import (
 	"log"
 )
 
+// DefaultLogger ...
 type DefaultLogger struct {
 	minLevel     LogLevel
 	loggers      map[LogLevel]*log.Logger
