@@ -44,6 +44,4 @@ func LogLevelFromString(val string) (level LogLevel) {
 	default:
 		level = Debug
 	}
-
-	return level
 }
