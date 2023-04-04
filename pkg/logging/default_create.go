@@ -10,6 +10,9 @@ import (
 	"github.com/koha90/platform/internal/config"
 )
 
+// TODO create other LogLevel with color
+var info = fmt.Sprintf("%c[1;40;34m%s%c[0m", 0x1B, "[INFO]: ", 0x1B)
+
 // NewDefaultLogger create default logger
 func NewDefaultLogger(cfg config.Configuration) Logger {
 	var level LogLevel = Debug
@@ -21,15 +24,11 @@ func NewDefaultLogger(cfg config.Configuration) Logger {
 	return &DefaultLogger{
 		minLevel: level,
 		loggers: map[LogLevel]*log.Logger{
-			Trace: log.New(os.Stdout, "[TRACE]: ", flags),
-			Debug: log.New(os.Stdout, "[DEBUG]: ", flags),
-			Information: log.New(
-				os.Stdout,
-				fmt.Sprintf("%c[1;40;34m%s%c[0m", 0x1B, "[INFO]: ", 0x1B),
-				flags,
-			),
-			Warning: log.New(os.Stdout, "[WARN]: ", flags),
-			Fatal:   log.New(os.Stdout, "[FATAL]: ", flags),
+			Trace:       log.New(os.Stdout, "[TRACE]: ", flags),
+			Debug:       log.New(os.Stdout, "[DEBUG]: ", flags),
+			Information: log.New(os.Stdout, info, flags),
+			Warning:     log.New(os.Stdout, "[WARN]: ", flags),
+			Fatal:       log.New(os.Stdout, "[FATAL]: ", flags),
 		},
 		triggerPanic: true,
 	}

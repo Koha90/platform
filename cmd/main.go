@@ -1,8 +1,9 @@
-// package main is general package for platform
+// Package main is general package for platform
 package main
 
 import (
 	"github.com/koha90/platform/internal/config"
+	"github.com/koha90/platform/internal/services"
 	"github.com/koha90/platform/pkg/logging"
 )
 
@@ -22,14 +23,13 @@ func writeMessage(logger logging.Logger, cfg config.Configuration) {
 }
 
 func main() {
+	services.RegistrationDefaultServices()
+
 	var cfg config.Configuration
-	var err error
+	services.GetService(&cfg)
 
-	cfg, err = config.Load("config.json")
-	if err != nil {
-		panic(err)
-	}
+	var logger logging.Logger
+	services.GetService(&logger)
 
-	var logger logging.Logger = logging.NewDefaultLogger(cfg)
 	writeMessage(logger, cfg)
 }
