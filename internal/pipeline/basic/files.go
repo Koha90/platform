@@ -7,21 +7,19 @@ import (
 
 	"github.com/koha90/platform/internal/config"
 	"github.com/koha90/platform/internal/pipeline"
-	"github.com/koha90/platform/internal/services"
 )
 
 // StaticFileComponent ...
 type StaticFileComponent struct {
 	urlPrefix     string
 	stdLibHandler http.Handler
+	Config        config.Configuration
 }
 
 // Init ...
 func (sfc *StaticFileComponent) Init() {
-	var cfg config.Configuration
-	services.GetService(&cfg)
-	sfc.urlPrefix = cfg.GetStringDefault("file:urlprefix", "/file/")
-	path, ok := cfg.GetString("files:path")
+	sfc.urlPrefix = sfc.Config.GetStringDefault("file:urlprefix", "/files/")
+	path, ok := sfc.Config.GetString("files:path")
 	if ok {
 		sfc.stdLibHandler = http.StripPrefix(sfc.urlPrefix, http.FileServer(http.Dir(path)))
 	} else {

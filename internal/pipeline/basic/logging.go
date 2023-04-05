@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/koha90/platform/internal/pipeline"
-	"github.com/koha90/platform/internal/services"
 	"github.com/koha90/platform/pkg/logging"
 )
 
@@ -29,24 +28,21 @@ func (w *LoggingResponseWritter) Write(b []byte) (int, error) {
 	return w.ResponseWriter.Write(b)
 }
 
-// LogginComponent ...
+// LoggingComponent ...
 type LoggingComponent struct{}
+
+// ImplementsProcessRequestWithServices ...
+func (lc *LoggingComponent) ImplementsProcessRequestWithServices() {}
 
 // Init ...
 func (lc *LoggingComponent) Init() {}
 
-// ProcessRequest ...
-func (lc *LoggingComponent) ProcessRequest(
+// ProcessRequestWithServices ...
+func (lc *LoggingComponent) ProcessRequestWithServices(
 	ctx *pipeline.ComponentContext,
 	next func(*pipeline.ComponentContext),
+	logger logging.Logger,
 ) {
-	var logger logging.Logger
-	err := services.GetServiceForContext(ctx.Request.Context(), &logger)
-	if err != nil {
-		ctx.Error(err)
-		return
-	}
-
 	loggingWriter := LoggingResponseWritter{0, ctx.ResponseWriter}
 	ctx.ResponseWriter = &loggingWriter
 
