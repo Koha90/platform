@@ -14,7 +14,6 @@ type SimpleMessageComponent struct {
 }
 
 // ImplementsProcessRequestWithServices ...
-// func (lc *SimpleMessageComponent) ImplementsProcessRequestWithServices() {}
 func (c *SimpleMessageComponent) ImplementsProcessRequestWithServices() {}
 
 // Init ...
