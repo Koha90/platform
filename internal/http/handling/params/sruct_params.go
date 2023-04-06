@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func populateStructFromForm(structVal reflect.Value, formVals map[string][]string) (err erroro) {
+func populateStructFromForm(structVal reflect.Value, formVals map[string][]string) (err error) {
 	for i := 0; i < structVal.Elem().Type().NumField(); i++ {
 		field := structVal.Elem().Type().Field(i)
 		for key, vals := range formVals {
