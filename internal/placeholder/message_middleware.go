@@ -2,34 +2,37 @@
 package placeholder
 
 import (
-	"errors"
-	"io"
-
 	"github.com/koha90/platform/internal/config"
 	"github.com/koha90/platform/internal/pipeline"
-	"github.com/koha90/platform/internal/services"
+	"github.com/koha90/platform/internal/templates"
 )
 
 // SimpleMessageComponent ...
-type SimpleMessageComponent struct{}
+type SimpleMessageComponent struct {
+	Message string
+	config.Configuration
+}
+
+// ImplementsProcessRequestWithServices ...
+// func (lc *SimpleMessageComponent) ImplementsProcessRequestWithServices() {}
+func (c *SimpleMessageComponent) ImplementsProcessRequestWithServices() {}
 
 // Init ...
-func (c *SimpleMessageComponent) Init() {}
+func (c *SimpleMessageComponent) Init() {
+	c.Message = c.Configuration.GetStringDefault("main:message",
+		"Default Message")
+}
 
-// ProcessRequest ...
-func (c *SimpleMessageComponent) ProcessRequest(
+// ProcessRequestWithServices ...
+func (c *SimpleMessageComponent) ProcessRequestWithServices(
 	ctx *pipeline.ComponentContext,
 	next func(*pipeline.ComponentContext),
+	executor templates.TemplateExecutor,
 ) {
-	var cfg config.Configuration
-	services.GetService(&cfg)
-
-	msg, ok := cfg.GetString("main:message")
-	if ok {
-		io.WriteString(ctx.ResponseWriter, msg)
+	err := executor.ExecTemplate(ctx.ResponseWriter, "simple_message.html", c.Message)
+	if err != nil {
+		ctx.Error(err)
 	} else {
-		ctx.Error(errors.New("Cannot find config setting"))
+		next(ctx)
 	}
-
-	next(ctx)
 }
