@@ -10,11 +10,13 @@ import (
 	"github.com/koha90/platform/internal/services"
 )
 
+// SimpleMessageComponent ...
 type SimpleMessageComponent struct{}
 
 // Init ...
 func (c *SimpleMessageComponent) Init() {}
 
+// ProcessRequest ...
 func (c *SimpleMessageComponent) ProcessRequest(
 	ctx *pipeline.ComponentContext,
 	next func(*pipeline.ComponentContext),

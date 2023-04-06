@@ -29,8 +29,8 @@ func Serve(
 
 	adaptor := pipelineAdaptor{RequestPipeline: pl}
 
-	enableHttp := cfg.GetBoolDefault("http:enableHttp", true)
-	if enableHttp {
+	enableHTTP := cfg.GetBoolDefault("http:enableHttp", true)
+	if enableHTTP {
 		httpPort := cfg.GetIntDefault("http:port", 5000)
 		logger.Debugf("Starting HTTP server on port %v", httpPort)
 		wg.Add(1)
@@ -42,8 +42,8 @@ func Serve(
 		}()
 	}
 
-	enableHttps := cfg.GetBoolDefault("http:enableHttp", false)
-	if enableHttps {
+	enableHTTPS := cfg.GetBoolDefault("http:enableHttps", false)
+	if enableHTTPS {
 		httpsPort := cfg.GetIntDefault("http:httpsPort", 5500)
 		certFile, cfok := cfg.GetString("http:httpsCert")
 		keyFile, kfok := cfg.GetString("http:httpsKey")
