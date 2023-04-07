@@ -4,4 +4,4 @@
 
 - GetName | GET | /name/1
 - GetNames | GET | /names
-- PostName | POST | /names
+- PostName | POST | /name
