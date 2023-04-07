@@ -10,16 +10,28 @@ import (
 // LayoutTemplateProcessor ...
 type LayoutTemplateProcessor struct{}
 
+var emptyFunc = func(handlerName string, methodName string, args ...interface{}) interface{} { return "" }
+
 // ExecTemplate ...
 func (proc *LayoutTemplateProcessor) ExecTemplate(writer io.Writer,
 	name string, data interface{},
+) (err error) {
+	return proc.ExecTemplateWithFunc(writer, name, data, emptyFunc)
+}
+
+func (proc *LayoutTemplateProcessor) ExecTemplateWithFunc(
+	writer io.Writer,
+	name string,
+	data interface{},
+	handleFunc InvokeHandleFunc,
 ) (err error) {
 	var sb strings.Builder
 	layoutName := ""
 	localTemplates := getTemplates()
 	localTemplates.Funcs(map[string]interface{}{
-		"body":   insertBodyWrapper(&sb),
-		"layout": setLayoutWrapper(&layoutName),
+		"body":    insertBodyWrapper(&sb),
+		"layout":  setLayoutWrapper(&layoutName),
+		"handler": handleFunc,
 	})
 	err = localTemplates.ExecuteTemplate(&sb, name, data)
 	if layoutName != "" {
