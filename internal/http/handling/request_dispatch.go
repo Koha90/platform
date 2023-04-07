@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/koha90/platform/internal/http/actionresults"
 	"github.com/koha90/platform/internal/http/handling/params"
 	"github.com/koha90/platform/internal/pipeline"
 	"github.com/koha90/platform/internal/services"
@@ -70,7 +71,18 @@ func (router *RouterComponent) invokeHandler(
 		paramVals = append([]reflect.Value{structVal.Elem()}, paramVals...)
 
 		result := route.handlerMethod.Func.Call(paramVals)
-		io.WriteString(context.ResponseWriter, fmt.Sprint(result[0].Interface()))
+		if len(result) > 0 {
+			if action, ok := result[0].Interface().(actionresults.ActionResult); ok {
+				err = services.PopulateForContext(context.Context(), action)
+				if err == nil {
+					err = action.Execute(
+						&actionresults.ActionContext{context.Context(), context.ResponseWriter},
+					)
+				} else {
+					io.WriteString(context.ResponseWriter, fmt.Sprint(result[0].Interface()))
+				}
+			}
+		}
 	}
 
 	return err
