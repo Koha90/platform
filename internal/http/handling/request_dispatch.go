@@ -21,7 +21,19 @@ type RouterComponent struct {
 
 // NewRouter ...
 func NewRouter(handlers ...HandlerEntry) *RouterComponent {
-	return &RouterComponent{generateRoutes(handlers...)}
+	routes := generateRoutes(handlers...)
+
+	var urlGen URLGenerator
+	services.GetService(&urlGen)
+	if urlGen == nil {
+		services.AddSingletone(func() URLGenerator {
+			return &routeUrlGenerator{routes: routes}
+		})
+	} else {
+		urlGen.AddRoutes(routes)
+	}
+
+	return &RouterComponent{routes: routes}
 }
 
 // Init ...

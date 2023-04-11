@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/koha90/platform/internal/http/actionresults"
+	"github.com/koha90/platform/internal/http/handling"
 	"github.com/koha90/platform/pkg/logging"
 )
 
@@ -13,6 +14,7 @@ var names = []string{"Alice", "Bob", "Charlie", "Dora"}
 // NameHandler ...
 type NameHandler struct {
 	logging.Logger
+	handling.URLGenerator
 }
 
 // GetName ...
@@ -48,10 +50,28 @@ func (n NameHandler) PostName(new NewName) actionresults.ActionResult {
 	} else {
 		names = append(names, new.Name)
 	}
-	return actionresults.NewJsonActionResult(names)
+
+	return n.redirectOrError(NameHandler.GetNames)
+}
+
+// GetRedirect ...
+func (n NameHandler) GetRedirect() actionresults.ActionResult {
+	return n.redirectOrError(NameHandler.GetNames)
 }
 
 // GetJsonData ...
 func (n NameHandler) GetJsonData() actionresults.ActionResult {
 	return actionresults.NewJsonActionResult(names)
+}
+
+func (n NameHandler) redirectOrError(
+	handler interface{},
+	data ...interface{},
+) actionresults.ActionResult {
+	url, err := n.GenerateURL(handler)
+	if err == nil {
+		return actionresults.NewRedirectAction(url)
+	} else {
+		return actionresults.NewErrorAction(err)
+	}
 }
