@@ -6,6 +6,7 @@ import (
 
 	"github.com/koha90/platform/internal/http/actionresults"
 	"github.com/koha90/platform/internal/http/handling"
+	"github.com/koha90/platform/internal/validation"
 	"github.com/koha90/platform/pkg/logging"
 )
 
@@ -15,6 +16,7 @@ var names = []string{"Alice", "Bob", "Charlie", "Dora"}
 type NameHandler struct {
 	logging.Logger
 	handling.URLGenerator
+	validation.Validator
 }
 
 // GetName ...
@@ -38,13 +40,24 @@ func (n NameHandler) GetNames() actionresults.ActionResult {
 
 // NewName ...
 type NewName struct {
-	Name          string
+	Name          string `validation:"required,min:3"`
 	InsertAtStart bool
+}
+
+// GetForm ...
+func (n NameHandler) GetForm() actionresults.ActionResult {
+	postURL, _ := n.URLGenerator.GenerateURL(NameHandler.PostName)
+	return actionresults.NewTemplateAction("name_form.html", postURL)
 }
 
 // PostName ...
 func (n NameHandler) PostName(new NewName) actionresults.ActionResult {
 	n.Logger.Debugf("PostName method invoked with argument %v", new)
+
+	if ok, errs := n.Validator.Validate(&new); !ok {
+		return actionresults.NewTemplateAction("validation_errors.html", errs)
+	}
+
 	if new.InsertAtStart {
 		names = append([]string{new.Name}, names...)
 	} else {
