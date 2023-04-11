@@ -19,11 +19,12 @@ func (proc *LayoutTemplateProcessor) ExecTemplate(writer io.Writer,
 	return proc.ExecTemplateWithFunc(writer, name, data, emptyFunc)
 }
 
+// ExecTemplateWithFunc ...
 func (proc *LayoutTemplateProcessor) ExecTemplateWithFunc(
 	writer io.Writer,
 	name string,
 	data interface{},
-	handleFunc InvokeHandleFunc,
+	handlerFunc InvokeHandleFunc,
 ) (err error) {
 	var sb strings.Builder
 	layoutName := ""
@@ -31,7 +32,7 @@ func (proc *LayoutTemplateProcessor) ExecTemplateWithFunc(
 	localTemplates.Funcs(map[string]interface{}{
 		"body":    insertBodyWrapper(&sb),
 		"layout":  setLayoutWrapper(&layoutName),
-		"handler": handleFunc,
+		"handler": handlerFunc,
 	})
 	err = localTemplates.ExecuteTemplate(&sb, name, data)
 	if layoutName != "" {

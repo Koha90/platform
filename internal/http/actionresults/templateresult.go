@@ -13,12 +13,15 @@ type TemplateActionResult struct {
 	templateName string
 	data         interface{}
 	templates.TemplateExecutor
+	templates.InvokeHandleFunc
 }
 
+// Execute ...
 func (action *TemplateActionResult) Execute(ctx *ActionContext) error {
-	return action.TemplateExecutor.ExecTemplate(
+	return action.TemplateExecutor.ExecTemplateWithFunc(
 		ctx.ResponseWriter,
 		action.templateName,
 		action.data,
+		action.InvokeHandleFunc,
 	)
 }
