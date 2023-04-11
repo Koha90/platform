@@ -4,6 +4,7 @@ package services
 import (
 	"github.com/koha90/platform/internal/config"
 	"github.com/koha90/platform/internal/templates"
+	"github.com/koha90/platform/internal/validation"
 	"github.com/koha90/platform/pkg/logging"
 )
 
@@ -30,6 +31,13 @@ func RegistrationDefaultServices() {
 			templates.LoadTemplates(c)
 			return &templates.LayoutTemplateProcessor{}
 		})
+	if err != nil {
+		panic(err)
+	}
+
+	err = AddSingletone(func() validation.Validator {
+		return validation.NewDefaultValidator(validation.DefaultValidators())
+	})
 	if err != nil {
 		panic(err)
 	}
